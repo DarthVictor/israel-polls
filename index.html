@@ -76,7 +76,7 @@
         <script type="text/javascript" src="parties.js"></script>
 
         <script type="text/javascript">
-            const currentParty = "מחל";
+            let currentParty = "מחל";
             const map = L.map("map").setView([31.5, 35], 8);
 
             const tiles = L.tileLayer(
@@ -102,16 +102,27 @@
                 const poll = props ? POLLS_25[props.SEMEL_YISHUV] : null;
 
                 const contents = props
-                    ? `<b>${capitalize(props.SHEM_YISHUV_ENGLISH)}</b><br />${
-                          poll
-                              ? (
-                                    (100 * poll.results[currentParty]) /
-                                    poll.valid
-                                ).toFixed(0)
-                              : 0
-                      }%`
+                    ? `<h4>${capitalize(props.SHEM_YISHUV)} / ${capitalize(
+                          props.SHEM_YISHUV_ENGLISH
+                      )}</h4>` +
+                      Object.values(ISRAEL_PARTIES)
+                          .map(
+                              ({ id, englishName, hebrewName }) =>
+                                  (id === currentParty ? "<strong>" : "") +
+                                  `${hebrewName} / ${englishName} - ${
+                                      poll
+                                          ? (
+                                                (100 * poll.results[id]) /
+                                                poll.valid
+                                            ).toFixed(0)
+                                          : 0
+                                  }%` +
+                                  (id === currentParty ? "</strong>" : "") +
+                                  "<br>"
+                          )
+                          .join("")
                     : "Hover over an area";
-                this._div.innerHTML = `<h4>Israel poll results (${ISRAEL_PARTIES[currentParty].englishName})</h4>${contents}`;
+                this._div.innerHTML = `<h4>Israel poll results</h4>${contents}`;
             };
 
             controls.addTo(map);
@@ -155,7 +166,7 @@
                 const layer = e.target;
 
                 layer.setStyle({
-                    weight: 5,
+                    weight: 3,
                     color: "#666",
                     dashArray: "",
                     fillOpacity: 0.7,
@@ -167,10 +178,17 @@
             }
 
             /* global AREAS_DATA */
-            const geojson = L.geoJson(AREAS_DATA, {
-                style,
-                onEachFeature,
-            }).addTo(map);
+            const geojson = L.geoJson(
+                {
+                    features: AREAS_DATA.features.filter(
+                        (f) => POLLS_25[f.properties.SEMEL_YISHUV]
+                    ),
+                },
+                {
+                    style,
+                    onEachFeature,
+                }
+            ).addTo(map);
 
             function resetHighlight(e) {
                 geojson.resetStyle(e.target);
@@ -208,7 +226,24 @@
                     );
                 }
 
-                div.innerHTML = labels.join("<br>");
+                const select = `<select id="selectParty">${Object.values(
+                    ISRAEL_PARTIES
+                ).map(
+                    ({ id, englishName, hebrewName }) =>
+                        `<option value=${id} ${
+                            id === currentParty ? "selected" : ""
+                        }>${hebrewName} / ${englishName}</option>`
+                )}</select><br><br>`;
+
+                div.innerHTML = select + labels.join("<br>");
+
+                div.querySelector("#selectParty").addEventListener(
+                    "change",
+                    (e) => {
+                        currentParty = e.target.value;
+                        geojson.setStyle(style);
+                    }
+                );
                 return div;
             };
 
