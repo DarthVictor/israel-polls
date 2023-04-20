@@ -1,3 +1,76 @@
+const ISRAEL_PARTIES_25 = {
+    אמת: {
+        id: "אמת",
+        hebrewName: "העבודה",
+        englishName: "Labor",
+    },
+    ב: {
+        id: "ב",
+        hebrewName: "ימינה",
+        englishName: "Yamina",
+    },
+    ג: {
+        id: "ג",
+        hebrewName: "יהדות התורה",
+        englishName: "United Torah Judaism",
+    },
+    ום: {
+        id: "ום",
+        hebrewName: "חד״ש־תע״ל",
+        englishName: "Hadash-Ta'al",
+    },
+    ט: {
+        id: "ט",
+        hebrewName: "הציונות הדתית",
+        englishName: "Religious Zionism",
+    },
+    כן: {
+        id: "כן",
+        hebrewName: "המחנה הממלכתי",
+        englishName: "National Unity",
+    },
+    ל: {
+        id: "ל",
+        hebrewName: "ישראל ביתנו",
+        englishName: "Yisrael Beiteinu",
+    },
+    מחל: {
+        id: "מחל",
+        hebrewName: "הליכוד",
+        englishName: "Likud",
+    },
+    מרצ: {
+        id: "מרצ",
+        hebrewName: "מרצ",
+        englishName: "Meretz",
+    },
+    עם: {
+        id: "עם",
+        hebrewName: "רעיימ",
+        englishName: "Ra'am",
+    },
+    פה: {
+        id: "פה",
+        hebrewName: "יש עתיד",
+        englishName: "Yesh Atid",
+    },
+    שס: {
+        id: "שס",
+        hebrewName: "שס",
+        englishName: "Shas",
+    },
+    זץ: {
+        id: "זץ",
+        hebrewName: "צומת",
+        englishName: "Tzomet",
+    },
+    ף: {
+        id: "ף",
+        hebrewName: "הפיראטים",
+        englishName: "Pirate Party of Israel",
+    },
+};
+
 const POLLS_25 = {
     7: {
         results: {

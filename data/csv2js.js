@@ -1,7 +1,11 @@
-const csv = ``;
+const fs = require("fs");
+const os = require("os");
+
+const csv = fs.readFileSync("polls_23.csv", { encoding: "utf-8" });
 
 const data = csv
-    .split("\n")
+
+    .split(os.EOL)
     .filter(Boolean)
     .map((row) => row.split(","));
 
@@ -36,4 +40,4 @@ for (let i = 1; i < data.length; i += 1) {
     result[row[idField]] = row;
 }
 
-result;
+fs.writeFileSync("polls_23.js", JSON.stringify(result));

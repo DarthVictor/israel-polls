@@ -72,10 +72,29 @@
         <div id="map"></div>
 
         <script type="text/javascript" src="israel-areas.js"></script>
+        <script type="text/javascript" src="polls_21.js"></script>
+        <script type="text/javascript" src="polls_22.js"></script>
+        <script type="text/javascript" src="polls_23.js"></script>
         <script type="text/javascript" src="polls_25.js"></script>
-        <script type="text/javascript" src="parties.js"></script>
 
         <script type="text/javascript">
+            const getPoll = (n) =>
+                ({
+                    21: POLLS_21,
+                    22: POLLS_22,
+                    23: POLLS_23,
+                    25: POLLS_25,
+                }[n]);
+            const getParty = (n) =>
+                ({
+                    21: ISRAEL_PARTIES_21,
+                    22: ISRAEL_PARTIES_22,
+                    23: ISRAEL_PARTIES_23,
+                    25: ISRAEL_PARTIES_25,
+                }[n]);
+            let currentPoll = "25";
+            let POLLS = getPoll(currentPoll);
+            let ISRAEL_PARTIES = getParty(currentPoll);
             let currentParty = "מחל";
             const map = L.map("map").setView([31.5, 35], 8);
 
@@ -99,7 +118,7 @@
             const capitalize = (s) =>
                 s ? s[0].toUpperCase() + s.slice(1).toLowerCase() : "";
             controls.update = function (props) {
-                const poll = props ? POLLS_25[props.SEMEL_YISHUV] : null;
+                const poll = props ? POLLS[props.SEMEL_YISHUV] : null;
 
                 const contents = props
                     ? `<h4>${capitalize(props.SHEM_YISHUV)} / ${capitalize(
@@ -147,7 +166,7 @@
             }
 
             function style(feature) {
-                const poll = POLLS_25[feature.properties.SEMEL_YISHUV];
+                const poll = POLLS[feature.properties.SEMEL_YISHUV];
                 return {
                     weight: 1,
                     opacity: 1,
@@ -181,7 +200,7 @@
             const geojson = L.geoJson(
                 {
                     features: AREAS_DATA.features.filter(
-                        (f) => POLLS_25[f.properties.SEMEL_YISHUV]
+                        (f) => POLLS[f.properties.SEMEL_YISHUV]
                     ),
                 },
                 {
@@ -226,7 +245,16 @@
                     );
                 }
 
-                const select = `<select id="selectParty">${Object.values(
+                const selectPolls = `<select id="selectPolls">
+                    ${["21", "22", "23", "25"].map(
+                        (n) =>
+                            `<option value="${n}" ${
+                                currentPoll === n ? "selected" : ""
+                            }>Polls ${n}</option>`
+                    )}
+                </select><br><br>`;
+
+                const selectParty = `<select id="selectParty">${Object.values(
                     ISRAEL_PARTIES
                 ).map(
                     ({ id, englishName, hebrewName }) =>
@@ -235,7 +263,22 @@
                         }>${hebrewName} / ${englishName}</option>`
                 )}</select><br><br>`;
 
-                div.innerHTML = select + labels.join("<br>");
+                div.innerHTML = selectPolls + selectParty + labels.join("<br>");
+
+                div.querySelector("#selectPolls").addEventListener(
+                    "change",
+                    (e) => {
+                        currentPoll = e.target.value;
+                        POLLS = getPoll(currentPoll);
+                        ISRAEL_PARTIES = getParty(currentPoll);
+                        if (ISRAEL_PARTIES[currentParty] == null) {
+                            currentParty = "מחל";
+                        }
+                        colorLegend.remove();
+                        colorLegend.addTo(map);
+                        geojson.setStyle(style);
+                    }
+                );
 
                 div.querySelector("#selectParty").addEventListener(
                     "change",
